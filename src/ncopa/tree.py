@@ -11,9 +11,7 @@ def print_tree(directives: list[Directive], prefix: str = ""):
         is_last = directive is directives[-1]
         connector = "└── " if is_last else "├── "
         print(f"{prefix}{connector}{directive.name}")
-
-        if directive.children:
-            print_tree(directive, prefix=prefix + ("    " if is_last else "│   "))
+        print_tree(directive, prefix=prefix + ("    " if is_last else "│   "))
 
 
 def main():
