@@ -1,6 +1,6 @@
 # ncopa
 
-ncopa is short for _n_ginx._co_nf _pa_rser. It offers a Python library for parsing an nginx.conf file.
+ncopa is short for nginx.conf parser. It offers a Python library for parsing an nginx.conf file.
 
 
 # Install
