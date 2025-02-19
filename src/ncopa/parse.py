@@ -5,11 +5,12 @@ Parse nginx.conf content
 
 import dataclasses
 import shlex
+from collections.abc import Sequence
 from typing import List
 
 
 @dataclasses.dataclass()
-class Directive:
+class Directive(Sequence):
     """A nginx.conf directive, which could contain nested directives."""
 
     name: str
@@ -18,18 +19,16 @@ class Directive:
 
     @classmethod
     def from_list(cls, lst):
-        """
-        Given a list, construct a directive.
-
-        >>> Directive.from_list(["location", "/hello"])
-        Directive(name='location', args=['/hello'])
-        """
-        lst = lst.copy()
-        name = lst.pop(0)
-        return cls(name, lst)
+        return cls(lst[0], lst[1:])
 
     def __iter__(self):
         return iter(self.children)
+
+    def __len__(self):
+        return len(self.children)
+
+    def __getitem__(self, index: int):
+        return self.children[index]
 
 
 def parse(text):

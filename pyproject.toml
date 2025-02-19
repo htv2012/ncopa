@@ -1,6 +1,6 @@
 [project]
 name = "ncopa"
-version = "0.1.0"
+version = "0.2.0"
 description = "ncopa: nginx.conf parser"
 readme = "README.md"
 authors = [
@@ -10,7 +10,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.scripts]
-ncopa = "ncopa:main"
+ntree = "ncopa.tree:main"
 
 [build-system]
 requires = ["hatchling"]

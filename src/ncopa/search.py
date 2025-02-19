@@ -3,7 +3,7 @@
 
 import pathlib
 
-from nginx_conf_lib import (
+from ncopa import (
     all_of,
     by_any_args,
     by_name,
