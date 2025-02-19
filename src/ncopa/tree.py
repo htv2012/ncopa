@@ -3,15 +3,20 @@
 
 import argparse
 
-from . import depth_first_traversal, parse, Directive
+from . import Directive, parse
 
 
-def visit(directive: Directive, parents: list[Directive]):
-    if parents and directive is parents[-1].children[-1]:
-        print(f"└── {directive.name}")
-    else:
-        print("│   "*len(parents), end="")
-        print(f"├── {directive.name}")
+def print_tree(directives: list[Directive], prefix=""):
+    for index, directive in enumerate(directives):
+        is_last = index == len(directives) - 1
+        connector = "├── "
+        if is_last:
+            connector = "└── "
+
+        print(f"{prefix}{connector}{directive.name}")
+
+        if directive.children:
+            print_tree(directive, prefix=prefix + ("    " if is_last else "│   "))
 
 
 def main():
@@ -22,8 +27,7 @@ def main():
     with open(options.file) as stream:
         directives = parse(stream.read())
 
-    for directive in directives:
-        depth_first_traversal(directive, visit=visit)
+    print_tree(directives)
 
 
 if __name__ == "__main__":
