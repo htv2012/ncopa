@@ -7,12 +7,9 @@ from . import Directive, parse
 
 
 def print_tree(directives: list[Directive], prefix=""):
-    for index, directive in enumerate(directives):
-        is_last = index == len(directives) - 1
-        connector = "├── "
-        if is_last:
-            connector = "└── "
-
+    for directive in directives:
+        is_last = directive is directives[-1]
+        connector = "├── " if is_last else "└── "
         print(f"{prefix}{connector}{directive.name}")
 
         if directive.children:
