@@ -6,10 +6,10 @@ import argparse
 from . import Directive, parse
 
 
-def print_tree(directives: list[Directive], prefix=""):
+def print_tree(directives: list[Directive], prefix: str = ""):
     for directive in directives:
         is_last = directive is directives[-1]
-        connector = "├── " if is_last else "└── "
+        connector = "└── " if is_last else "├── "
         print(f"{prefix}{connector}{directive.name}")
 
         if directive.children:
