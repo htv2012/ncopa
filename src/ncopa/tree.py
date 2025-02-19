@@ -3,12 +3,15 @@
 
 import argparse
 
-from . import depth_first_traversal, parse
+from . import depth_first_traversal, parse, Directive
 
 
-def visit(directive, parents):
-    print("  " * len(parents), end="- ")
-    print(directive.name, " ".join(directive.args))
+def visit(directive: Directive, parents: list[Directive]):
+    if parents and directive is parents[-1].children[-1]:
+        print(f"└── {directive.name}")
+    else:
+        print("│   "*len(parents), end="")
+        print(f"├── {directive.name}")
 
 
 def main():

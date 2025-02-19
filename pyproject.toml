@@ -10,7 +10,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.scripts]
-ncopa = "ncopa:main"
+ntree = "ncopa.tree:main"
 
 [build-system]
 requires = ["hatchling"]
