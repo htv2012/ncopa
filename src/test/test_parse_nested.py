@@ -7,7 +7,6 @@ import pytest
 from ncopa import Directive, parse
 
 CONFIG = """
-# simple.conf
 user nginx;
 error_log /var/log/nginx/error.log notice;
 http {

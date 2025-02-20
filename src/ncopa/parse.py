@@ -35,6 +35,9 @@ def parse(text):
     """Parse text into a list of Directive objects."""
     tokens = shlex.shlex(text, posix=True, punctuation_chars=";")
     tokens.whitespace_split = True
+    tokens.wordchars += ".:"
+    tokens.commenters = ""
+
     directives = []
     stack = [directives]
     lst = []
@@ -51,6 +54,13 @@ def parse(text):
             lst = []
         elif token == "}":
             stack.pop()
+        elif token == "#":
+            args = []
+            anchor = tokens.lineno
+            while anchor == tokens.lineno:
+                args.append(next(tokens))
+            directive = Directive("#", args)
+            stack[-1].append(directive)
         else:
             lst.append(token)
     return directives
