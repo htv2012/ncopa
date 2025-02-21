@@ -20,7 +20,7 @@ class Directive(Sequence):
 
     name: str
     args: List[str] = dataclasses.field(default_factory=list)
-    comment: str = dataclasses.field(default_factory=str)
+    bottom_comment: str = dataclasses.field(default_factory=str)
     children: List = dataclasses.field(default_factory=list, repr=False)
 
     @classmethod
@@ -69,8 +69,9 @@ def parse(text):
     for token in tokens:
         if token == TOK_TERMINATOR:
             directive = Directive.from_list(lst)
+            # BUG: detect_comment might scan to the next line. It should not do that.
             if detect_comment(tokens):
-                directive.comment = parse_comment(tokens)
+                directive.bottom_comment = parse_comment(tokens)
             stack[-1].append(directive)
             lst = []
         elif token == TOK_OPEN:
@@ -82,7 +83,7 @@ def parse(text):
             stack.pop()
         elif token == TOK_COMMENT:
             tokens.push_token(token)
-            stack[-1].append(Directive(name="", comment=parse_comment(tokens)))
+            stack[-1].append(Directive(name="", bottom_comment=parse_comment(tokens)))
         else:
             lst.append(token)
     return directives

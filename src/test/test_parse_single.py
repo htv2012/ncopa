@@ -33,4 +33,4 @@ def test_children(directives):
 
 
 def test_comment(directives):
-    assert directives[0].comment == ""
+    assert directives[0].bottom_comment == ""

@@ -30,18 +30,18 @@ def test_standalone_comment(directives):
     cmt = directives[0]
     assert cmt.name == ""
     assert cmt.args == []
-    assert cmt.comment == "# File: simple.conf"
+    assert cmt.bottom_comment == "# File: simple.conf"
 
 
-def test_tail_comment(directives):
+def test_comment_at_eol(directives):
     user = directives[1]
     assert user.name == "user"
     assert user.args == ["nginx"]
-    assert user.comment == "# Default use which iteracts with the system"
+    assert user.bottom_comment == "# Default use which iteracts with the system"
 
 
 def test_nested_comment(directives):
     cmt = directives[-1][0]
     assert cmt.name == ""
     assert cmt.args == []
-    assert cmt.comment == "# default type"
+    assert cmt.bottom_comment == "# default type"
