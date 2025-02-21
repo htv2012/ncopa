@@ -31,9 +31,20 @@ class Directive(Sequence):
         return self.children[index]
 
 
+def add_semicolons_to_comments(text: str):
+    """Add semicolons to comment lines"""
+    # FIX: Does not work for inline comment
+    return "\n".join(
+        f"{line};" if line.strip().startswith("#") else line
+        for line in text.splitlines()
+    )
+
+
 def parse(text):
     """Parse text into a list of Directive objects."""
-    tokens = shlex.shlex(text, posix=True, punctuation_chars=";")
+    tokens = shlex.shlex(
+        add_semicolons_to_comments(text), posix=True, punctuation_chars=";"
+    )
     tokens.whitespace_split = True
     tokens.wordchars += ".:"
     tokens.commenters = ""
@@ -54,13 +65,6 @@ def parse(text):
             lst = []
         elif token == "}":
             stack.pop()
-        elif token == "#":
-            args = []
-            anchor = tokens.lineno
-            while anchor == tokens.lineno:
-                args.append(next(tokens))
-            directive = Directive("#", args)
-            stack[-1].append(directive)
         else:
             lst.append(token)
     return directives
