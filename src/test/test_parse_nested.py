@@ -7,7 +7,6 @@ import pytest
 from ncopa import Directive, parse
 
 CONFIG = """
-# simple.conf
 user nginx;
 error_log /var/log/nginx/error.log notice;
 http {
@@ -93,6 +92,10 @@ def test_http_children(http):
     assert len(http.children) == 1
 
 
+def test_http_comment(http):
+    assert http.bottom_comment == ""
+
+
 # ======================================================================
 
 
@@ -106,3 +109,7 @@ def test_default_type_args(default_type):
 
 def test_default_type_children(default_type):
     assert default_type.children == []
+
+
+def test_defaullt_type_comment(default_type):
+    assert default_type.bottom_comment == ""

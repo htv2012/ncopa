@@ -30,3 +30,7 @@ def test_args(directives):
 def test_children(directives):
     """Verify the children"""
     assert directives[0].children == []
+
+
+def test_comment(directives):
+    assert directives[0].bottom_comment == ""
