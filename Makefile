@@ -25,3 +25,7 @@ test: lint
 ### Display in tree format
 tree: lint
 	uv run ntree src/test/data/nginx.conf | less
+
+### Start Jupyter Lab
+lab:
+	uv run jupyter lab

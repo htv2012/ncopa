@@ -16,6 +16,8 @@ http {
 }
 """.strip()
 
+print(repr(TEXT))
+
 
 @pytest.fixture(scope="module")
 def directives():
@@ -23,6 +25,8 @@ def directives():
 
 
 def test_count(directives):
+    for d in directives:
+        print(d)
     assert len(directives) == 4
 
 
