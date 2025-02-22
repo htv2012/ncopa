@@ -17,6 +17,13 @@ http { # top comment
 """.strip()
 
 
+STANDALONE_COMMENT = 0
+USER = 1
+WORKER_PROCESS = 2
+HTTP = 3
+NESTED_COMMENT = 0
+
+
 @pytest.fixture(scope="module")
 def directives():
     return parse(TEXT)
@@ -27,29 +34,29 @@ def test_count(directives):
 
 
 def test_standalone_comment(directives):
-    cmt = directives[0]
-    assert cmt.name == ""
-    assert cmt.args == []
-    assert cmt.bottom_comment == "# File: simple.conf"
+    assert directives[STANDALONE_COMMENT].name == ""
+    assert directives[STANDALONE_COMMENT].args == []
+    assert directives[STANDALONE_COMMENT].bottom_comment == "# File: simple.conf"
 
 
 def test_comment_at_eol(directives):
-    user = directives[1]
-    assert user.name == "user"
-    assert user.args == ["nginx"]
-    assert user.bottom_comment == "# Default use which iteracts with the system"
+    assert directives[USER].name == "user"
+    assert directives[USER].args == ["nginx"]
+    assert (
+        directives[USER].bottom_comment
+        == "# Default use which iteracts with the system"
+    )
 
 
 def test_nested_comment(directives):
-    cmt = directives[-1][0]
-    assert cmt.name == ""
-    assert cmt.args == []
-    assert cmt.bottom_comment == "# default type"
+    assert directives[HTTP][NESTED_COMMENT].name == ""
+    assert directives[HTTP][NESTED_COMMENT].args == []
+    assert directives[HTTP][NESTED_COMMENT].bottom_comment == "# default type"
 
 
 def test_top_comment(directives):
-    assert directives[-1].top_comment == "# top comment"
+    assert directives[HTTP].top_comment == "# top comment"
 
 
 def test_bottom_comment(directives):
-    assert directives[-1].bottom_comment == "# bottom comment"
+    assert directives[HTTP].bottom_comment == "# bottom comment"
