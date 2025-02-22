@@ -10,14 +10,8 @@ TEXT = """
 # File: simple.conf
 user nginx; # Default use which iteracts with the system
 worker_processes auto;
-http {
+http { # top comment
     # default type
-	default_type application/octet-stream;
-}
-""".strip()
-
-TEXT2 = """
-http {  # top comment
 	default_type application/octet-stream;
 }  # bottom comment
 """.strip()
@@ -26,11 +20,6 @@ http {  # top comment
 @pytest.fixture(scope="module")
 def directives():
     return parse(TEXT)
-
-
-@pytest.fixture
-def directives2():
-    return parse(TEXT2)
 
 
 def test_count(directives):
@@ -58,8 +47,9 @@ def test_nested_comment(directives):
     assert cmt.bottom_comment == "# default type"
 
 
-def test_top_bottom_comments(directives2):
-    assert len(directives2) == 1
-    cmt = directives2[0]
-    assert cmt.name == "http"
-    assert cmt.bottom_comment == "# bottom comment"
+def test_top_comment(directives):
+    assert directives[-1].top_comment == "# top comment"
+
+
+def test_bottom_comment(directives):
+    assert directives[-1].bottom_comment == "# bottom comment"
