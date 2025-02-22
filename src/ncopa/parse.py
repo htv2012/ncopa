@@ -4,6 +4,7 @@ Parse nginx.conf content
 """
 
 import dataclasses
+import enum
 import shlex
 from collections.abc import Sequence
 from typing import List
@@ -16,12 +17,19 @@ TOK_CR = "\r"
 TOK_LF = "\n"
 
 
+class CommentType(enum.Enum):
+    STANDALONE = enum.auto()
+    TOP = enum.auto()
+    BOTTOM = enum.auto()
+
+
 @dataclasses.dataclass()
 class Directive(Sequence):
     """A nginx.conf directive, which could contain nested directives."""
 
     name: str
     args: List[str] = dataclasses.field(default_factory=list)
+    top_comment: str = dataclasses.field(default_factory=str)
     bottom_comment: str = dataclasses.field(default_factory=str)
     children: List = dataclasses.field(default_factory=list, repr=False)
 
@@ -55,33 +63,42 @@ def parse(text):
     directives = []
     stack = [directives]
     lst = []
-    standalone_comment = True
+    comment_type: CommentType = CommentType.STANDALONE
 
     for token in lex:
         if token == TOK_TERMINATOR:
             directive = Directive.from_list(lst)
             if peek(lex) == TOK_COMMENT:
-                standalone_comment = False
+                comment_type = CommentType.BOTTOM
             stack[-1].append(directive)
             lst = []
         elif token == TOK_OPEN:
             directive = Directive.from_list(lst)
             stack[-1].append(directive)
+            if peek(lex) == TOK_COMMENT:
+                comment_type = CommentType.TOP
             stack.append(directive.children)
             lst = []
         elif token == TOK_CLOSE:
             stack.pop()
             if peek(lex) == TOK_COMMENT:
-                standalone_comment = False
+                comment_type = CommentType.BOTTOM
         elif token == TOK_LF or token == TOK_LF:
             # CR and LF only are meaningful when parsing comments
             if not (lst and lst[0] == TOK_COMMENT):
                 continue
 
-            if standalone_comment:
-                stack[-1].append(Directive(name=""))
-            stack[-1][-1].bottom_comment = " ".join(lst)
-            standalone_comment = True
+            comment = " ".join(lst)
+            if comment_type == CommentType.STANDALONE:
+                directive = Directive(name="", bottom_comment=comment)
+                stack[-1].append(directive)
+            elif comment_type == CommentType.TOP:
+                stack[-2][-1].top_comment = comment
+            elif comment_type == CommentType.BOTTOM:
+                stack[-1][-1].bottom_comment = comment
+
+            # Reset
+            comment_type = CommentType.STANDALONE
             lst = []
         else:
             lst.append(token)
