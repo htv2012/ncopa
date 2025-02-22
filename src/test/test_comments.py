@@ -10,10 +10,10 @@ TEXT = """
 # File: simple.conf
 user nginx; # Default use which iteracts with the system
 worker_processes auto;
-http {
+http { # top comment
     # default type
 	default_type application/octet-stream;
-}
+}  # bottom comment
 """.strip()
 
 
@@ -45,3 +45,11 @@ def test_nested_comment(directives):
     assert cmt.name == ""
     assert cmt.args == []
     assert cmt.bottom_comment == "# default type"
+
+
+def test_top_comment(directives):
+    assert directives[-1].top_comment == "# top comment"
+
+
+def test_bottom_comment(directives):
+    assert directives[-1].bottom_comment == "# bottom comment"
