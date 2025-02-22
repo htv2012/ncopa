@@ -87,7 +87,7 @@ def parse(text):
         elif token == TOK_COMMENT:
             lex.push_token(token)
             stack[-1].append(Directive(name="", bottom_comment=parse_comment(lex)))
-        elif token == TOK_LF or token == TOK_LF:
+        elif token == TOK_CR or token == TOK_LF:
             # CR and LF only are meaningful when parsing comments
             pass
         else:
