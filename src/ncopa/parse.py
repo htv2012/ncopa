@@ -39,20 +39,10 @@ class Directive(Sequence):
         return self.children[index]
 
 
-def detect_comment(lex: shlex.shlex) -> bool:
+def peek(lex: shlex.shlex) -> str:
     token = lex.get_token()
-    detected = token == TOK_COMMENT
     lex.push_token(token)
-    return detected
-
-
-def parse_comment(lex: shlex.shlex) -> str:
-    comment = []
-    for token in lex:
-        if token == TOK_CR or token == TOK_LF:
-            break
-        comment.append(token)
-    return " ".join(comment)
+    return token
 
 
 def parse(text):
@@ -65,12 +55,13 @@ def parse(text):
     directives = []
     stack = [directives]
     lst = []
+    standalone_comment = True
 
     for token in lex:
         if token == TOK_TERMINATOR:
             directive = Directive.from_list(lst)
-            if detect_comment(lex):
-                directive.bottom_comment = parse_comment(lex)
+            if peek(lex) == TOK_COMMENT:
+                standalone_comment = False
             stack[-1].append(directive)
             lst = []
         elif token == TOK_OPEN:
@@ -80,11 +71,16 @@ def parse(text):
             lst = []
         elif token == TOK_CLOSE:
             stack.pop()
-        elif token == TOK_COMMENT:
-            lex.push_token(token)
-            stack[-1].append(Directive(name="", bottom_comment=parse_comment(lex)))
         elif token == TOK_LF or token == TOK_LF:
-            pass
+            # CR and LF only are meaningful when parsing comments
+            if not (lst and lst[0] == TOK_COMMENT):
+                continue
+
+            if standalone_comment:
+                stack[-1].append(Directive(name=""))
+            stack[-1][-1].bottom_comment = " ".join(lst)
+            standalone_comment = True
+            lst = []
         else:
             lst.append(token)
     return directives
