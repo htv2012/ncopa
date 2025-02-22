@@ -57,7 +57,7 @@ def parse_comment(lex: shlex.shlex) -> str:
 
 def parse(text):
     """Parse text into a list of Directive objects."""
-    lex = shlex.shlex(text + "\n", posix=True, punctuation_chars=";")
+    lex = shlex.shlex(text, posix=True, punctuation_chars=";")
     lex.wordchars += ".:"
     lex.whitespace = " \t"
     lex.commenters = ""
