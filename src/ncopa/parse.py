@@ -4,7 +4,6 @@ Parse nginx.conf content
 """
 
 import dataclasses
-import enum
 import shlex
 from collections.abc import Sequence
 from typing import List
@@ -15,12 +14,6 @@ TOK_OPEN = "{"
 TOK_CLOSE = "}"
 TOK_CR = "\r"
 TOK_LF = "\n"
-
-
-class CommentType(enum.Enum):
-    STANDALONE = enum.auto()
-    TOP = enum.auto()
-    BOTTOM = enum.auto()
 
 
 @dataclasses.dataclass()
@@ -53,6 +46,15 @@ def peek(lex: shlex.shlex) -> str:
     return token
 
 
+def parse_comment(lex: shlex.shlex) -> str:
+    comment = []
+    for token in lex:
+        if token == TOK_CR or token == TOK_LF:
+            break
+        comment.append(token)
+    return " ".join(comment)
+
+
 def parse(text):
     """Parse text into a list of Directive objects."""
     lex = shlex.shlex(text + "\n", posix=True, punctuation_chars=";")
@@ -63,43 +65,31 @@ def parse(text):
     directives = []
     stack = [directives]
     lst = []
-    comment_type: CommentType = CommentType.STANDALONE
 
     for token in lex:
         if token == TOK_TERMINATOR:
             directive = Directive.from_list(lst)
             if peek(lex) == TOK_COMMENT:
-                comment_type = CommentType.BOTTOM
+                directive.bottom_comment = parse_comment(lex)
             stack[-1].append(directive)
             lst = []
         elif token == TOK_OPEN:
             directive = Directive.from_list(lst)
             stack[-1].append(directive)
             if peek(lex) == TOK_COMMENT:
-                comment_type = CommentType.TOP
+                directive.top_comment = parse_comment(lex)
             stack.append(directive.children)
             lst = []
         elif token == TOK_CLOSE:
             stack.pop()
             if peek(lex) == TOK_COMMENT:
-                comment_type = CommentType.BOTTOM
+                stack[-1][-1].bottom_comment = parse_comment(lex)
+        elif token == TOK_COMMENT:
+            lex.push_token(token)
+            stack[-1].append(Directive(name="", bottom_comment=parse_comment(lex)))
         elif token == TOK_LF or token == TOK_LF:
             # CR and LF only are meaningful when parsing comments
-            if not (lst and lst[0] == TOK_COMMENT):
-                continue
-
-            comment = " ".join(lst)
-            if comment_type == CommentType.STANDALONE:
-                directive = Directive(name="", bottom_comment=comment)
-                stack[-1].append(directive)
-            elif comment_type == CommentType.TOP:
-                stack[-2][-1].top_comment = comment
-            elif comment_type == CommentType.BOTTOM:
-                stack[-1][-1].bottom_comment = comment
-
-            # Reset
-            comment_type = CommentType.STANDALONE
-            lst = []
+            pass
         else:
             lst.append(token)
     return directives
