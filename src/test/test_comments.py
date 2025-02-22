@@ -16,10 +16,21 @@ http {
 }
 """.strip()
 
+TEXT2 = """
+http {  # top comment
+	default_type application/octet-stream;
+}  # bottom comment
+""".strip()
+
 
 @pytest.fixture(scope="module")
 def directives():
     return parse(TEXT)
+
+
+@pytest.fixture
+def directives2():
+    return parse(TEXT2)
 
 
 def test_count(directives):
@@ -45,3 +56,10 @@ def test_nested_comment(directives):
     assert cmt.name == ""
     assert cmt.args == []
     assert cmt.bottom_comment == "# default type"
+
+
+def test_top_bottom_comments(directives2):
+    assert len(directives2) == 1
+    cmt = directives2[0]
+    assert cmt.name == "http"
+    assert cmt.bottom_comment == "# bottom comment"

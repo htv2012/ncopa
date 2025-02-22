@@ -47,7 +47,7 @@ def peek(lex: shlex.shlex) -> str:
 
 def parse(text):
     """Parse text into a list of Directive objects."""
-    lex = shlex.shlex(text, posix=True, punctuation_chars=";")
+    lex = shlex.shlex(text + "\n", posix=True, punctuation_chars=";")
     lex.wordchars += ".:"
     lex.whitespace = " \t"
     lex.commenters = ""
@@ -71,6 +71,8 @@ def parse(text):
             lst = []
         elif token == TOK_CLOSE:
             stack.pop()
+            if peek(lex) == TOK_COMMENT:
+                standalone_comment = False
         elif token == TOK_LF or token == TOK_LF:
             # CR and LF only are meaningful when parsing comments
             if not (lst and lst[0] == TOK_COMMENT):
