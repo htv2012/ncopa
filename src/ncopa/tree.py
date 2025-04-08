@@ -7,6 +7,10 @@ from . import Directive, parse
 
 
 def print_tree(directives: list[Directive], prefix: str = ""):
+    # Skip Comments; must be done ahead so we can calculate the last directive
+    # Do not combine it with the next for loop
+    directives = [directive for directive in directives if directive.name != ""]
+
     for directive in directives:
         is_last = directive is directives[-1]
         connector = "└── " if is_last else "├── "
