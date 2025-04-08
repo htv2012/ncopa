@@ -7,7 +7,6 @@ import dataclasses
 import shlex
 from collections.abc import Sequence
 from itertools import takewhile
-from typing import List
 
 TOK_COMMENT = "#"
 TOK_TERMINATOR = ";"
@@ -22,10 +21,10 @@ class Directive(Sequence):
     """A nginx.conf directive, which could contain nested directives."""
 
     name: str
-    args: List[str] = dataclasses.field(default_factory=list)
+    args: list[str] = dataclasses.field(default_factory=list)
     top_comment: str = dataclasses.field(default_factory=str)
     bottom_comment: str = dataclasses.field(default_factory=str)
-    children: List = dataclasses.field(default_factory=list, repr=False)
+    children: list = dataclasses.field(default_factory=list, repr=False)
 
     @classmethod
     def from_list(cls, lst):
@@ -41,10 +40,10 @@ class Directive(Sequence):
         return self.children[index]
 
 
-def peek(lex: shlex.shlex) -> str:
+def comment_ahead(lex: shlex.shlex) -> bool:
     token = lex.get_token()
     lex.push_token(token)
-    return token
+    return token == TOK_COMMENT
 
 
 def parse_comment(lex: shlex.shlex) -> str:
@@ -69,20 +68,20 @@ def parse(text):
     for token in lex:
         if token == TOK_TERMINATOR:
             directive = Directive.from_list(lst)
-            if peek(lex) == TOK_COMMENT:
+            if comment_ahead(lex):
                 directive.bottom_comment = parse_comment(lex)
             stack[-1].append(directive)
             lst = []
         elif token == TOK_OPEN:
             directive = Directive.from_list(lst)
             stack[-1].append(directive)
-            if peek(lex) == TOK_COMMENT:
+            if comment_ahead(lex):
                 directive.top_comment = parse_comment(lex)
             stack.append(directive.children)
             lst = []
         elif token == TOK_CLOSE:
             stack.pop()
-            if peek(lex) == TOK_COMMENT:
+            if comment_ahead(lex):
                 stack[-1][-1].bottom_comment = parse_comment(lex)
         elif token == TOK_COMMENT:
             lex.push_token(token)
