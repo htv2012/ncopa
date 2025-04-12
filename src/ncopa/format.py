@@ -11,8 +11,15 @@ def main():
     parser = argparse.ArgumentParser("nformat")
     parser.add_argument("file")
     parser.add_argument(
-        "-i", "--indent", default=4, type=int, help="number of spaces to indent"
+        "-I",
+        "--indent",
+        default=4,
+        type=int,
+        metavar="N",
+        help="number of spaces to indent",
     )
+    parser.add_argument("-i", "--inplace", help="Modify file in place")
+    parser.add_argument("-o", "--output", metavar="FILE", help="Output to file")
     options = parser.parse_args()
 
     with open(options.file) as stream:

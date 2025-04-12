@@ -1,6 +1,6 @@
 [project]
 name = "ncopa"
-version = "0.3.4"
+version = "0.4.0"
 description = "ncopa: nginx.conf parser"
 readme = "README.md"
 authors = [
