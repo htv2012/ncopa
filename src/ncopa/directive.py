@@ -44,8 +44,11 @@ class Directive(Sequence):
             buf.write(f"{self.bottom_comment}\n")
 
 
-def _to_string(directive: Directive, level: int, buf):
-    buf.write("    " * level)
+def _to_string(directive: Directive, level: int, indent: str, buf):
+    """
+    Helper to function to_string
+    """
+    buf.write(indent * level)
 
     # Handle stand-alone comment
     if directive.is_comment():
@@ -68,17 +71,17 @@ def _to_string(directive: Directive, level: int, buf):
     buf.write("\n")
 
     for child_directive in directive:
-        _to_string(child_directive, level=level + 1, buf=buf)
+        _to_string(child_directive, level + 1, indent, buf)
 
-    buf.write("    " * level)
+    buf.write(indent * level)
     buf.write("}")
     if directive.has_bottom_comment():
         buf.write(f" {directive.bottom_comment}")
     buf.write("\n")
 
 
-def to_string(directives: list[Directive]) -> str:
+def to_string(directives: list[Directive], indent="    ") -> str:
     buf = io.StringIO()
     for directive in directives:
-        _to_string(directive, level=0, buf=buf)
+        _to_string(directive, level=0, indent=indent, buf=buf)
     return buf.getvalue()
