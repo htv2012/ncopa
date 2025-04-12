@@ -1,10 +1,8 @@
 .PHONY: all test run lint clean
 
 ### Default target(s)
-all: test sandbox
+all: test
 
-sandbox:
-	uv run nformat src/test/data/poor_format.conf
 ### Clean up generated files
 clean:
 	uv clean

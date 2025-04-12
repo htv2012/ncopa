@@ -27,7 +27,7 @@ class Directive(Sequence):
         return self.children[index]
 
     def is_comment(self) -> bool:
-        return self.name == "" and self.bottom_comment
+        return self.name == "" and self.bottom_comment != ""
 
     def has_top_comment(self) -> bool:
         return self.top_comment != ""
