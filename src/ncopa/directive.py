@@ -1,6 +1,7 @@
 import dataclasses
-from collections.abc import Sequence
 import io
+from collections.abc import Sequence
+
 
 @dataclasses.dataclass()
 class Directive(Sequence):
@@ -27,13 +28,57 @@ class Directive(Sequence):
 
     def is_comment(self) -> bool:
         return self.name == "" and self.bottom_comment
-    
+
+    def has_top_comment(self) -> bool:
+        return self.top_comment != ""
+
+    def has_bottom_comment(self) -> bool:
+        return self.bottom_comment != ""
+
+    def is_context(self) -> bool:
+        return self.children != []
+
     def __str__(self):
         buf = io.StringIO()
         if self.is_comment():
             buf.write(f"{self.bottom_comment}\n")
-        
 
 
-def to_string(directive: Directive) -> str:
-    pass
+def _to_string(directive: Directive, level: int, buf):
+    buf.write("    " * level)
+
+    # Handle stand-alone comment
+    if directive.is_comment():
+        buf.write(directive.bottom_comment)
+        buf.write("\n")
+        return
+
+    args = " ".join(directive.args)
+
+    # Handle directive without children
+    buf.write(f"{directive.name} {args}")
+    if not directive.is_context():
+        buf.write(";\n")
+        return
+
+    # Handle directive with children
+    buf.write(" {")
+    if directive.has_top_comment():
+        buf.write(f" {directive.top_comment}")
+    buf.write("\n")
+
+    for child_directive in directive:
+        _to_string(child_directive, level=level + 1, buf=buf)
+
+    buf.write("    " * level)
+    buf.write("}")
+    if directive.has_bottom_comment():
+        buf.write(f" {directive.bottom_comment}")
+    buf.write("\n")
+
+
+def to_string(directives: list[Directive]) -> str:
+    buf = io.StringIO()
+    for directive in directives:
+        _to_string(directive, level=0, buf=buf)
+    return buf.getvalue()

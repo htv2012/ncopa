@@ -4,7 +4,7 @@ Format a nginx.conf file
 
 import argparse
 
-from . import parse
+from . import directive, parse
 
 
 def main():
@@ -14,4 +14,4 @@ def main():
 
     with open(options.file) as stream:
         directives = parse(stream.read())
-    assert directives is not None
+    print(directive.to_string(directives))
