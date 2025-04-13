@@ -11,7 +11,7 @@ dependencies = []
 
 [project.scripts]
 ntree = "ncopa.tree:main"
-nformat = "ncopa.format:main"
+nfmt = "ncopa.format:main"
 
 [build-system]
 requires = ["hatchling"]

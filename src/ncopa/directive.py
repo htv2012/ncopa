@@ -56,11 +56,12 @@ def _to_string(directive: Directive, level: int, indent: str, buf):
         buf.write("\n")
         return
 
-    # Handle directive without children
     buf.write(f"{directive.name}")
     args = " ".join(directive.args)
     if args:
         buf.write(f" {args}")
+
+    # Handle directive without children
     if not directive.is_context():
         buf.write(";\n")
         return

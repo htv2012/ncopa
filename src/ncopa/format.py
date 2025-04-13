@@ -13,7 +13,7 @@ def create_backup(file: pathlib.Path):
     bak.write_bytes(content)
 
 def main():
-    parser = argparse.ArgumentParser("nformat")
+    parser = argparse.ArgumentParser("nfmt")
     parser.add_argument("file", type=pathlib.Path)
     parser.add_argument(
         "-I",
