@@ -1,6 +1,6 @@
 [project]
 name = "ncopa"
-version = "0.3.4"
+version = "0.4.0"
 description = "ncopa: nginx.conf parser"
 readme = "README.md"
 authors = [
@@ -11,6 +11,7 @@ dependencies = []
 
 [project.scripts]
 ntree = "ncopa.tree:main"
+nfmt = "ncopa.format:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -19,6 +20,8 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "jupyterlab[all]>=4.3.5",
+    "pudb>=2024.1.3",
     "pytest>=8.3.4",
+    "pytest-dotenv>=0.5.2",
     "ruff>=0.9.6",
 ]

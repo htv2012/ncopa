@@ -3,10 +3,10 @@
 Parse nginx.conf content
 """
 
-import dataclasses
 import shlex
-from collections.abc import Sequence
 from itertools import takewhile
+
+from .directive import Directive
 
 TOK_COMMENT = "#"
 TOK_TERMINATOR = ";"
@@ -14,30 +14,6 @@ TOK_OPEN = "{"
 TOK_CLOSE = "}"
 TOK_CR = "\r"
 TOK_LF = "\n"
-
-
-@dataclasses.dataclass()
-class Directive(Sequence):
-    """A nginx.conf directive, which could contain nested directives."""
-
-    name: str
-    args: list[str] = dataclasses.field(default_factory=list)
-    top_comment: str = dataclasses.field(default_factory=str)
-    bottom_comment: str = dataclasses.field(default_factory=str)
-    children: list = dataclasses.field(default_factory=list, repr=False)
-
-    @classmethod
-    def from_list(cls, lst):
-        return cls(lst[0], lst[1:])
-
-    def __iter__(self):
-        return iter(self.children)
-
-    def __len__(self):
-        return len(self.children)
-
-    def __getitem__(self, index: int):
-        return self.children[index]
 
 
 def comment_ahead(lex: shlex.shlex) -> bool:

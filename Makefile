@@ -20,7 +20,7 @@ lint:
 
 ### Run unit tests
 test: lint
-	uv run pytest -s -v
+	uv run pytest -s -vv
 
 ### Display in tree format
 tree: lint
