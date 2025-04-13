@@ -34,6 +34,9 @@ def main():
     group.add_argument("-o", "--output", type=pathlib.Path,metavar="FILE", help="Output to a file")
     options = parser.parse_args()
 
+    if not options.file.exists():
+        raise SystemExit(f"File {options.file} does not exist")
+
     directives = parse(options.file.read_text())
     formatted = directive.to_string(directives, indent=options.indent * " ")
 
