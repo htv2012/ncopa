@@ -56,10 +56,11 @@ def _to_string(directive: Directive, level: int, indent: str, buf):
         buf.write("\n")
         return
 
-    args = " ".join(directive.args)
-
     # Handle directive without children
-    buf.write(f"{directive.name} {args}")
+    buf.write(f"{directive.name}")
+    args = " ".join(directive.args)
+    if args:
+        buf.write(f" {args}")
     if not directive.is_context():
         buf.write(";\n")
         return
@@ -84,4 +85,6 @@ def to_string(directives: list[Directive], indent="    ") -> str:
     buf = io.StringIO()
     for directive in directives:
         _to_string(directive, level=0, indent=indent, buf=buf)
+    with open("/tmp/out.conf", "w") as stream:
+        stream.write(buf.getvalue())
     return buf.getvalue()
