@@ -35,7 +35,9 @@ jobs:
         uv sync --dev
 
     - name: Ensure Code Are Formatted
-      run: uv run ruff format --check
+      run: |
+        uv run ruff format --check
+        uv run ruff check --select I .
 
     - name: Static Analysis
       run: uv run ruff check .
