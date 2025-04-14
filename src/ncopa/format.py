@@ -1,6 +1,7 @@
 """
 Format a nginx.conf file
 """
+
 import argparse
 import pathlib
 
@@ -9,8 +10,9 @@ from . import directive, parse
 
 def create_backup(file: pathlib.Path):
     content = file.read_bytes()
-    bak = file.with_suffix('.bak')
+    bak = file.with_suffix(".bak")
     bak.write_bytes(content)
+
 
 def main():
     parser = argparse.ArgumentParser("nfmt")
@@ -31,7 +33,9 @@ def main():
         default=False,
         help="Modify file in place",
     )
-    group.add_argument("-o", "--output", type=pathlib.Path,metavar="FILE", help="Output to a file")
+    group.add_argument(
+        "-o", "--output", type=pathlib.Path, metavar="FILE", help="Output to a file"
+    )
     options = parser.parse_args()
 
     if not options.file.exists():
@@ -49,4 +53,3 @@ def main():
         options.output.write_text(formatted)
     else:
         print(formatted)
-

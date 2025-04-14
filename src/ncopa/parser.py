@@ -4,7 +4,6 @@ Parse nginx.conf content
 """
 
 import shlex
-from itertools import takewhile
 
 from .directive import Directive
 
@@ -23,11 +22,7 @@ def comment_ahead(lex: shlex.shlex) -> bool:
 
 
 def parse_comment(lex: shlex.shlex) -> str:
-    def not_eol(token: str) -> bool:
-        """Return true if token is not a CR or LF character"""
-        return not (token == TOK_CR or token == TOK_LF)
-
-    return " ".join(takewhile(not_eol, lex))
+    return f"#{lex.instream.readline()}"
 
 
 def parse(text):
@@ -58,9 +53,9 @@ def parse(text):
         elif token == TOK_CLOSE:
             stack.pop()
             if comment_ahead(lex):
+                next(lex)
                 stack[-1][-1].bottom_comment = parse_comment(lex)
         elif token == TOK_COMMENT:
-            lex.push_token(token)
             stack[-1].append(Directive(name="", bottom_comment=parse_comment(lex)))
         elif token == TOK_CR or token == TOK_LF:
             # CR and LF are meaningful only when parsing comments
