@@ -22,8 +22,9 @@ def comment_ahead(lex: shlex.shlex) -> bool:
 
 
 def parse_comment(lex: shlex.shlex) -> str:
+    comment_char = next(lex)
     comment = lex.instream.readline().rstrip()
-    return f"#{comment}"
+    return f"{comment_char}{comment}"
 
 
 def parse(text):
@@ -45,21 +46,18 @@ def parse(text):
             stack[-1].append(directive)
             lst = []
         elif token == TOK_OPEN:
-            # breakpoint()
             directive = Directive.from_list(lst)
             stack[-1].append(directive)
             if comment_ahead(lex):
-                next(lex)
                 directive.top_comment = parse_comment(lex)
             stack.append(directive.children)
             lst = []
         elif token == TOK_CLOSE:
-            # breakpoint()
             stack.pop()
             if comment_ahead(lex):
-                next(lex)
                 stack[-1][-1].bottom_comment = parse_comment(lex)
         elif token == TOK_COMMENT:
+            lex.push_token(TOK_COMMENT)
             stack[-1].append(Directive(name="", bottom_comment=parse_comment(lex)))
         elif token == TOK_CR or token == TOK_LF:
             # CR and LF are meaningful only when parsing comments
