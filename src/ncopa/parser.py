@@ -2,7 +2,9 @@
 """
 Parse nginx.conf content
 """
+
 import shlex
+
 from .directive import Directive
 
 TOK_COMMENT = "#"
