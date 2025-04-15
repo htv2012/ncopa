@@ -2,7 +2,6 @@
 """Display a tree to represent a config file"""
 
 import argparse
-import importlib.metadata
 
 from . import Directive, parse
 from .version import version_parser
