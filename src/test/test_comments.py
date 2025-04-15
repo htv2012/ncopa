@@ -33,6 +33,38 @@ def test_count(directives):
     assert len(directives) == 4
 
 
+def test_simple_standalone_comment():
+    comment = "# This is  simple"
+    directives = parse(comment)
+    assert len(directives) == 1
+    directive = directives[0]
+    assert directive.is_comment()
+    assert directive.name == ""
+    assert directive.top_comment == ""
+    assert directive.bottom_comment == comment
+
+
+def test_strip_crlf():
+    comment = "# Hello  world \r\n"
+    directives = parse(comment)
+    assert len(directives) == 1
+    directive = directives[0]
+    assert directive.is_comment()
+    assert directive.name == ""
+    assert directive.top_comment == ""
+    assert directive.bottom_comment == "# Hello  world "
+
+
+def test_top_bottom():
+    text = "http { # Top  comment\n} # Bottom  comment"
+    directives = parse(text)
+    assert len(directives) == 1
+    directive = directives[0]
+    assert directive.name == "http"
+    assert directive.has_top_comment()
+    assert directive.has_bottom_comment()
+
+
 def test_standalone_comment(directives):
     assert directives[STANDALONE_COMMENT].name == ""
     assert directives[STANDALONE_COMMENT].args == []
