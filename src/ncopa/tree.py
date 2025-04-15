@@ -2,6 +2,7 @@
 """Display a tree to represent a config file"""
 
 import argparse
+import importlib.metadata
 
 from . import Directive, parse
 
@@ -19,7 +20,12 @@ def print_tree(directives: list[Directive], prefix: str = ""):
 
 
 def main():
+    version = importlib.metadata.version("ncopa")
+
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {version}"
+    )
     parser.add_argument("file")
     options = parser.parse_args()
 

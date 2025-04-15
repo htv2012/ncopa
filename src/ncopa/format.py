@@ -3,6 +3,7 @@ Format a nginx.conf file
 """
 
 import argparse
+import importlib.metadata
 import pathlib
 
 from . import directive, parse
@@ -15,7 +16,12 @@ def create_backup(file: pathlib.Path):
 
 
 def main():
-    parser = argparse.ArgumentParser("nfmt")
+    version = importlib.metadata.version("ncopa")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {version}"
+    )
     parser.add_argument("file", type=pathlib.Path)
     parser.add_argument(
         "-I",
