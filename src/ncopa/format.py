@@ -6,6 +6,7 @@ import argparse
 import pathlib
 
 from . import directive, parse
+from .version import version_parser
 
 
 def create_backup(file: pathlib.Path):
@@ -15,7 +16,7 @@ def create_backup(file: pathlib.Path):
 
 
 def main():
-    parser = argparse.ArgumentParser("nfmt")
+    parser = argparse.ArgumentParser(parents=[version_parser])
     parser.add_argument("file", type=pathlib.Path)
     parser.add_argument(
         "-I",

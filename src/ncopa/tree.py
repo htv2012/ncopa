@@ -4,6 +4,7 @@
 import argparse
 
 from . import Directive, parse
+from .version import version_parser
 
 
 def print_tree(directives: list[Directive], prefix: str = ""):
@@ -19,7 +20,7 @@ def print_tree(directives: list[Directive], prefix: str = ""):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(parents=[version_parser])
     parser.add_argument("file")
     options = parser.parse_args()
 

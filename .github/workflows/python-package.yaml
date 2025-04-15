@@ -31,8 +31,7 @@ jobs:
         allow-prereleases: true
 
     - name: Install Dev Tools
-      run: |
-        uv sync --dev
+      run: uv sync --dev
 
     - name: Ensure Code Are Formatted
       run: |
