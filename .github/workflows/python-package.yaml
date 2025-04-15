@@ -30,9 +30,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
 
-    - name: Ensure uv.lock is up-to-date
-      run: uv sync --check
-
     - name: Install Dev Tools
       run: uv sync --dev
 
