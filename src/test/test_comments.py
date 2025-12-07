@@ -8,7 +8,7 @@ from ncopa import parse
 
 TEXT = """
 # File: simple.conf
-user nginx; # Default use which iteracts with the system
+user nginx; # Default use which interacts with the system
 worker_processes auto;
 http { # top comment
     # default type
@@ -76,7 +76,7 @@ def test_comment_at_eol(directives):
     assert directives[USER].args == ["nginx"]
     assert (
         directives[USER].bottom_comment
-        == "# Default use which iteracts with the system"
+        == "# Default use which interacts with the system"
     )
 
 
